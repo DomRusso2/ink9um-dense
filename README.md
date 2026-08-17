@@ -101,7 +101,23 @@ The gap tracks label density segment by segment. In the run where w016 alone rev
 
 ---
 
-## 3. Where the metric and the picture disagree
+## 3. Full segments on Scroll 1667
+
+Validation crops are small enough to hide how a model behaves over a whole segment, so all six 1667 segments were inferred end to end at 9.6 µm with our model and with `seed43/step-060000`, the best released checkpoint on this scroll. Identical inference settings, identical display rescale, same downsample factor for both.
+
+![w013 full segment](figures/full_segments_1667/pherc1667-w013_full.png)
+
+Both models render the manually labelled strips as equally legible Greek, so the dense labels do not cost the strong material. Outside those strips the difference is consistent across segments: the released checkpoint produces fine speckle, ours produces horizontal row structure, which is the expected appearance of ink at this resolution given that even readable text comes out as organised rows of blobs rather than clean glyphs.
+
+Ours also over-predicts in patches. It is clearest at the bottom right of w013 and w029 and in the left bands of w023, and it is visible as washed-out regions rather than structure.
+
+![w029 full segment](figures/full_segments_1667/pherc1667-w029_full.png)
+
+w029 above is the honest worst case. It is one of the two regions where we score below the released bar, 0.7882 against 0.8434, and at native resolution the released checkpoint's detail crop looks better than ours there.
+
+All twelve images are in `figures/full_segments_1667/`, one `_full.png` per segment plus a `_detail.png` giving a 1100 px native-resolution window with the input surface volume alongside for comparison. Detail windows are selected from the mean of both models' predictions rather than from either model's own confidence, since selecting on one model's density picks exactly where that model over-predicts and hands it an unfair panel. Reproduce with `scripts/full_segment_1667.py`.
+
+## 4. Where the metric and the picture disagree
 
 ![w016 metric versus legibility](figures/fig2_w016_metric_vs_legibility.png)
 
@@ -130,7 +146,7 @@ One likely mechanism, offered as a hypothesis rather than a result: the teacher 
 
 ---
 
-## 4. What to download
+## 5. What to download
 
 **Checkpoints:** [huggingface.co/domenicor046/ink9um-dense](https://huggingface.co/domenicor046/ink9um-dense)
 
@@ -168,7 +184,7 @@ python -m koine_machines.training.train configs/train_pseudo_ex016_config.json
 
 ---
 
-## 5. Method details
+## 6. Method details
 
 **Teacher.** `scrollprize/ink_canonical_2um` on each segment's public 2.4 um surface volume. 62 centered layers of 109, `clip(0,200)/200`, tile 256, stride 128, direction forward. Reverse scores at chance on every segment tested. Output pooled to 9.6 um by 4x z-mean over the level-2 XY grid, matching the official `prepare_9um` recipe, then thresholded at a per-segment `t*` chosen on that segment's supervision region only: w016 0.15, w017 0.33, w028 0.27, w029 0.25, 0814 0.53, 1667-w028 0.45, 1667-w029 0.36.
 
@@ -182,7 +198,7 @@ python -m koine_machines.training.train configs/train_pseudo_ex016_config.json
 
 ---
 
-## 6. Honest evaluation notes
+## 7. Honest evaluation notes
 
 - Validation regions were excluded from pseudo supervision by construction, verified per segment as exactly zero overlapping pixels before training.
 - All thresholds were calibrated on supervision regions only. No validation pixel was used to choose anything.
@@ -194,7 +210,7 @@ python -m koine_machines.training.train configs/train_pseudo_ex016_config.json
 
 ---
 
-## 7. Smaller findings
+## 8. Smaller findings
 
 **`vc_render_tifxyz` is wrong at fractional scale.** At `-g 2` or `--scale-segmentation 0.25` it samples the wrong coordinates, correlating 0.03 to 0.17 against both the official 9.6 um training input and an independently validated reference render, with local and remote paths disagreeing with each other. Full-canvas runs abort on a `cv::Mat` ROI assert, and `--scale 0.125` segfaults. It appears correct only at native scale, which is how the team uses it. This blocks generating 9.6 um training inputs from tifxyz with the shipped binary, which is what motivated writing our own renderer.
 
@@ -210,7 +226,7 @@ The renderer in `scripts/render_w016_ref.py` reaches Pearson r 0.925 against the
 
 ---
 
-## 8. Data and code availability
+## 9. Data and code availability
 
 Everything derives from public endpoints: surface volumes and CT from the open-data S3 bucket, labels and checkpoints from the `scrollprize` Hugging Face bucket and the `scrollprize/ink_9um` model repo. No credentials needed. The scripts in `scripts/` are the ones that produced every number and figure here, and `results/step9_results.jsonl` holds the raw records.
 
