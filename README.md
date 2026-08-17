@@ -99,6 +99,8 @@ The clearest effect is on overfitting. Supervised score minus held-out score:
 
 The gap tracks label density segment by segment. In the run where w016 alone reverted to sparse labels, w016's gap went straight back to 0.240 while the other segments stayed low. That is about as direct as this kind of evidence gets.
 
+The gap closes from both ends, and it is worth being explicit about which end moves more. Held-out accuracy rises on all three regions, by +0.077, +0.100 and +0.026. Supervised accuracy falls, by 0.150, 0.040 and 0.176. Both are expected: a model scoring 0.99 on the pixels it trained on is memorising a hand-drawn mask, and nobody needs a model to relabel what a human already labelled. The number that matters is the held-out one, and it moves the right way in every case. Section 3 shows the same effect in pixels rather than in aggregate.
+
 ---
 
 ## 3. Full segments on Scroll 1667
@@ -107,9 +109,28 @@ Validation crops are small enough to hide how a model behaves over a whole segme
 
 ![w013 full segment](figures/full_segments_1667/pherc1667-w013_full.png)
 
-Both models render the manually labelled strips as equally legible Greek, so the dense labels do not cost the strong material. Outside those strips the difference is consistent across segments: the released checkpoint produces fine speckle, ours produces horizontal row structure, which is the expected appearance of ink at this resolution given that even readable text comes out as organised rows of blobs rather than clean glyphs.
+Both models render the manually labelled strips as equally legible Greek on the segments that kept their manual labels, so the dense labels do not cost the strong material there. That was the main risk going in, since the failure mode the team names for enhancement methods is gaining clearness while losing fainter signal.
 
-Ours also over-predicts in patches. It is clearest at the bottom right of w013 and w029 and in the left bands of w023, and it is visible as washed-out regions rather than structure.
+Outside those strips there is no ground truth on five of the six segments, so the honest thing is a measurement rather than a verdict. Taking confident ink as `p >= 200`, here is how much of each model's confident output falls inside the small supervised fraction of each canvas:
+
+| segment | pseudo-labelled | supervised % of canvas | released concentration | ours | confident-ink rate inside supervision, released to ours |
+|---|---|---|---|---|---|
+| pherc1667-w013 | no | 1.62% | 52.0x | **106.3x** | 0.169 to 0.161 |
+| pherc1667-w018 | no | 5.35% | 12.6x | **18.5x** | 0.066 to 0.066 |
+| pherc1667-w023 | no | 2.02% | 26.3x | **48.0x** | 0.098 to 0.104 |
+| pherc1667-w031 | no | 3.46% | 31.0x | **46.9x** | 0.124 to 0.127 |
+| pherc1667-w028 | **yes** | 1.19% | 28.9x | 4.4x | 0.158 to **0.014** |
+| pherc1667-w029 | **yes** | 1.63% | 28.2x | 5.7x | 0.173 to **0.022** |
+
+Two things fall out, and together they show the sparse-supervision bias being removed.
+
+**Where labels stayed manual, ours is the cleaner model.** On w013, w018, w023 and w031 it emits confident ink outside supervision at roughly half the released rate, while preserving the labelled letters just as crisply and showing more mid-confidence horizontal row structure in the unlabelled areas. Whether that mid-confidence structure is real ink or a smoother class of false positive cannot be settled from these segments, since they carry no labels out there.
+
+**Where labels went dense, the model stopped treating the hand-drawn strips as special.** On w028 and w029, the two segments whose labels were replaced with teacher pseudo-labels, confident ink inside the old supervised strips drops by a factor of 8 to 11, and the concentration ratio falls from about 28x to about 5x. The split lines up exactly with which segments were pseudo-labelled. That is the intended effect stated in pixels: once supervision covers 83% of the canvas instead of 1.6%, the hand-labelled strip stops being the only place the loss cares about, and the model stops spiking there. It is also the mechanism behind the lower supervised scores in section 2, which are a consequence of less memorisation rather than a loss of capability.
+
+A note for reading the images: the display rescale `(p-0.25)/0.5` makes mid-confidence values look bright, so the washed-out regions, clearest at the bottom right of w013 and w029, are mid-confidence output rather than confident predictions.
+
+Numbers for all six are in `results/confident_ink_concentration.json`.
 
 ![w029 full segment](figures/full_segments_1667/pherc1667-w029_full.png)
 

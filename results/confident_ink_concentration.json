@@ -1,0 +1,92 @@
+{
+ "pherc1667-w013": {
+  "supervised_frac": 0.01622848376497874,
+  "released_s43_060000": {
+   "rate_inside": 0.16885102840518815,
+   "rate_outside": 0.0032477632896673334,
+   "concentration_x": 51.98994303014105,
+   "share_of_confident_ink_inside": 0.461681428897066
+  },
+  "dense_w016excl": {
+   "rate_inside": 0.1605024285076699,
+   "rate_outside": 0.0015101176660648223,
+   "concentration_x": 106.28471682337123,
+   "share_of_confident_ink_inside": 0.636798565442812
+  }
+ },
+ "pherc1667-w018": {
+  "supervised_frac": 0.0534824545072758,
+  "released_s43_060000": {
+   "rate_inside": 0.06589439971539197,
+   "rate_outside": 0.005240696402303037,
+   "concentration_x": 12.573596075215217,
+   "share_of_confident_ink_inside": 0.4153633666869268
+  },
+  "dense_w016excl": {
+   "rate_inside": 0.066015648836066,
+   "rate_outside": 0.003575452592282415,
+   "concentration_x": 18.463578283364807,
+   "share_of_confident_ink_inside": 0.5105894636311725
+  }
+ },
+ "pherc1667-w023": {
+  "supervised_frac": 0.02017906690214147,
+  "released_s43_060000": {
+   "rate_inside": 0.0982845667634047,
+   "rate_outside": 0.0037412849704241587,
+   "concentration_x": 26.270270118520788,
+   "share_of_confident_ink_inside": 0.3510820851125712
+  },
+  "dense_w016excl": {
+   "rate_inside": 0.10369820840012872,
+   "rate_outside": 0.0021589211570389936,
+   "concentration_x": 48.03242029567816,
+   "share_of_confident_ink_inside": 0.49728806339684256
+  }
+ },
+ "pherc1667-w028": {
+  "supervised_frac": 0.011905406990857579,
+  "released_s43_060000": {
+   "rate_inside": 0.15812164113733754,
+   "rate_outside": 0.00547445658890565,
+   "concentration_x": 28.88353182995031,
+   "share_of_confident_ink_inside": 0.2581676355989857
+  },
+  "dense_w016excl": {
+   "rate_inside": 0.014343379341366983,
+   "rate_outside": 0.0032777850636462806,
+   "concentration_x": 4.37593651287528,
+   "share_of_confident_ink_inside": 0.050084321214225486
+  }
+ },
+ "pherc1667-w029": {
+  "supervised_frac": 0.016305908449284128,
+  "released_s43_060000": {
+   "rate_inside": 0.1725693886216264,
+   "rate_outside": 0.006119232491461737,
+   "concentration_x": 28.20114922294834,
+   "share_of_confident_ink_inside": 0.31855406357627586
+  },
+  "dense_w016excl": {
+   "rate_inside": 0.02194053169430669,
+   "rate_outside": 0.003857317992237067,
+   "concentration_x": 5.6880277276756726,
+   "share_of_confident_ink_inside": 0.08616201515249627
+  }
+ },
+ "pherc1667-w031": {
+  "supervised_frac": 0.03455888800523735,
+  "released_s43_060000": {
+   "rate_inside": 0.12428246681708921,
+   "rate_outside": 0.004007101518863001,
+   "concentration_x": 31.015552321807373,
+   "share_of_confident_ink_inside": 0.526118311580261
+  },
+  "dense_w016excl": {
+   "rate_inside": 0.12680520485538785,
+   "rate_outside": 0.0027048550148245564,
+   "concentration_x": 46.88059217976707,
+   "share_of_confident_ink_inside": 0.6266059170205864
+  }
+ }
+}

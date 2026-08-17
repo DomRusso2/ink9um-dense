@@ -176,6 +176,40 @@ def render(seg, paths):
     print(f"  wrote {os.path.relpath(p2, ROOT)}  ({W}x{H})")
 
 
+def concentration(seg, paths):
+    """How much of each model's CONFIDENT output falls inside the 1-2 percent of
+    canvas that carries manual supervision.
+
+    This is the only quantitative statement available about the unlabelled area:
+    five of the six 1667 segments have no validation mask, so nothing out there
+    can be scored. Reported as a measurement, not a verdict.
+    """
+    lab = os.path.join(ROOT, "data/ink9um/labels/aligned-scrollprizeorg-21slices",
+                       seg, f"{seg}_supervision_mask.zarr")
+    if not os.path.exists(lab):
+        return None
+    g = zarr.open(lab, mode="r")
+    a = g["0"] if hasattr(g, "array_keys") and "0" in list(g.array_keys()) else g
+    sup = np.asarray(a[10]) > 0
+    out = {"supervised_frac": float(sup.mean())}
+    for tag, _, label in MODELS:
+        p = paths.get(tag)
+        if not p or not os.path.exists(p):
+            continue
+        hi = tifffile.imread(p) >= 200
+        inside, outside = float(hi[sup].mean()), float(hi[~sup].mean())
+        out[tag] = {
+            "rate_inside": inside,
+            "rate_outside": outside,
+            "concentration_x": inside / max(outside, 1e-9),
+            "share_of_confident_ink_inside": float(hi[sup].sum() / max(1, hi.sum())),
+        }
+        print(f"  {label[:38]:<40} inside {inside:.4f}  outside {outside:.4f}"
+              f"  {inside/max(outside,1e-9):6.1f}x  "
+              f"{100*hi[sup].sum()/max(1,hi.sum()):5.1f}% of confident ink inside {100*sup.mean():.2f}% of canvas")
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", action="append", default=[])
@@ -183,12 +217,22 @@ def main():
     args = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
     segs = args.only or list(VOLUMES)
+    stats = {}
     for seg in segs:
         print(f"\n=== {seg} ===", flush=True)
         paths = {}
         for tag, ckpt, _ in MODELS:
             paths[tag] = pred_path(tag, seg) if args.render_only else infer(tag, ckpt, seg)
         render(seg, paths)
+        c = concentration(seg, paths)
+        if c:
+            stats[seg] = c
+    if stats:
+        import json
+        out = os.path.join(ROOT, "release/ink9um-dense/results/confident_ink_concentration.json")
+        with open(out, "w") as fh:
+            json.dump(stats, fh, indent=1)
+        print("wrote " + os.path.relpath(out, ROOT))
 
 
 if __name__ == "__main__":
