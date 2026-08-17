@@ -1,0 +1,8 @@
+# artifacts live on Hugging Face, not in git
+checkpoints/
+pseudo_labels/
+*.pth
+*.tar
+*.tif
+__pycache__/
+*.pyc

@@ -1,0 +1,269 @@
+{
+ "description": "Hybrid local-3D-stem / 2D U-Net on the aligned 21-slice corpus: 17-of-21 jittered Z window, fixed scroll-prior batch sampling, robust-MAD normalization, smoothed BCE + Dice. Fill in out_dir and the datasets block for your data layout; the full corpus contract (29 representations across 4 scrolls) is aligned21_fixed_scroll_prior.json.",
+ "mode": "flat",
+ "model_type": "vesuvius_unet_3d_stem_2d",
+ "model_config": {
+  "autoconfigure": true,
+  "basic_encoder_block": "BasicBlockD",
+  "basic_decoder_block": "ConvBlock",
+  "stem_channels": 16,
+  "z_projection_mode": "none"
+ },
+ "targets": {
+  "ink": {
+   "activation": "none",
+   "out_channels": 1,
+   "z_projection_mode": "none"
+  }
+ },
+ "in_channels": 1,
+ "patch_size": [
+  17,
+  128,
+  128
+ ],
+ "patch_overlap": 0.25,
+ "patch_min_labeled_coverage": 0.0,
+ "flat_z_window_jitter": {
+  "enabled": true,
+  "window_depth": 17,
+  "max_offset": 2,
+  "probability": 1.0,
+  "padding": "forbidden"
+ },
+ "image_normalization": {
+  "mode": "robust_mad",
+  "percentile_lower": 1.0,
+  "percentile_upper": 99.0
+ },
+ "augmentation_preset": "default",
+ "augmentation_rotation_axes": [
+  0
+ ],
+ "loss": {
+  "bce_label_smoothing": 0.5,
+  "dice_label_smoothing": 0.0
+ },
+ "optimizer": "sgd",
+ "learning_rate": 0.01,
+ "weight_decay": 3e-05,
+ "scheduler": {
+  "name": "diffusers_cosine_warmup"
+ },
+ "warmup_steps": 1000,
+ "grad_clip": 1.0,
+ "mixed_precision": "fp16",
+ "batch_size": 64,
+ "num_iterations": 78125,
+ "seed": 42,
+ "sampling_strategy": "fixed_scroll_prior_stratified",
+ "fixed_scroll_prior": {
+  "seed": 42,
+  "target_batch_counts": {
+   "0139": 29,
+   "1667": 22,
+   "Paris4": 11,
+   "0814": 2
+  }
+ },
+ "sampling_audit_every": 200,
+ "best_checkpoint_metric": "val_balanced_accuracy",
+ "save_every": 5000,
+ "val_every": 5000,
+ "val_steps": 32,
+ "val_preview_batches": 1,
+ "log_every": 50,
+ "dataloader_workers": 12,
+ "pin_memory": true,
+ "verify_finite_gradients_steps": 0,
+ "max_amp_overflow_events": 0,
+ "out_dir": "C:/Users/nikox/Documents/Vesuvius/data/train_baseline",
+ "datasets": [
+  {
+   "segments_path": "C:/Users/nikox/Documents/Vesuvius/data/ink9um/labels/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "pherc0139-w016",
+    "pherc0139-w017",
+    "pherc0139-w028",
+    "pherc0139-w029",
+    "pherc0139-w035",
+    "pherc0139-w039",
+    "pherc0139-w040",
+    "pherc0139-w041",
+    "pherc0139-w043"
+   ],
+   "surface_volume_paths": {
+    "pherc0139-w016": "C:/Users/nikox/Documents/Vesuvius/data/ink9um/volumes_w016/w016_9um_iso.zarr",
+    "pherc0139-w017": "C:/Users/nikox/Documents/Vesuvius/data/teacher/w017_iso9.zarr",
+    "pherc0139-w028": "C:/Users/nikox/Documents/Vesuvius/data/teacher/w028_iso9.zarr",
+    "pherc0139-w029": "C:/Users/nikox/Documents/Vesuvius/data/teacher/w029_0139_iso9.zarr",
+    "pherc0139-w035": "C:/Users/nikox/Documents/Vesuvius/data/corpus/pherc0139-w035_iso9.zarr",
+    "pherc0139-w039": "C:/Users/nikox/Documents/Vesuvius/data/corpus/pherc0139-w039_iso9.zarr",
+    "pherc0139-w040": "C:/Users/nikox/Documents/Vesuvius/data/corpus/pherc0139-w040_iso9.zarr",
+    "pherc0139-w041": "C:/Users/nikox/Documents/Vesuvius/data/corpus/pherc0139-w041_iso9.zarr",
+    "pherc0139-w043": "C:/Users/nikox/Documents/Vesuvius/data/corpus/pherc0139-w043_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "0139",
+   "sampling_physical_segment_keys": {
+    "pherc0139-w016": "0139:w016",
+    "pherc0139-w017": "0139:w017",
+    "pherc0139-w028": "0139:w028",
+    "pherc0139-w029": "0139:w029",
+    "pherc0139-w035": "0139:w035",
+    "pherc0139-w039": "0139:w039",
+    "pherc0139-w040": "0139:w040",
+    "pherc0139-w041": "0139:w041",
+    "pherc0139-w043": "0139:w043"
+   },
+   "sampling_representation_keys": {
+    "pherc0139-w016": "public_2p4_level2_zmean4:pherc0139-w016",
+    "pherc0139-w017": "public_2p4_level2_zmean4:pherc0139-w017",
+    "pherc0139-w028": "public_2p4_level2_zmean4:pherc0139-w028",
+    "pherc0139-w029": "public_2p4_level2_zmean4:pherc0139-w029",
+    "pherc0139-w035": "public_2p4_level2_zmean4:pherc0139-w035",
+    "pherc0139-w039": "public_2p4_level2_zmean4:pherc0139-w039",
+    "pherc0139-w040": "public_2p4_level2_zmean4:pherc0139-w040",
+    "pherc0139-w041": "public_2p4_level2_zmean4:pherc0139-w041",
+    "pherc0139-w043": "public_2p4_level2_zmean4:pherc0139-w043"
+   }
+  },
+  {
+   "segments_path": "C:/Users/nikox/Documents/Vesuvius/data/ink9um/labels/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "pherc1667-w013",
+    "pherc1667-w018",
+    "pherc1667-w023",
+    "pherc1667-w028",
+    "pherc1667-w029",
+    "pherc1667-w031"
+   ],
+   "surface_volume_paths": {
+    "pherc1667-w013": "C:/Users/nikox/Documents/Vesuvius/data/corpus/pherc1667-w013_iso9.zarr",
+    "pherc1667-w018": "C:/Users/nikox/Documents/Vesuvius/data/ink9um/volumes_pherc1667-w018/w018_9um_iso.zarr",
+    "pherc1667-w023": "C:/Users/nikox/Documents/Vesuvius/data/corpus/pherc1667-w023_iso9.zarr",
+    "pherc1667-w028": "C:/Users/nikox/Documents/Vesuvius/data/teacher/p1667w028_iso9.zarr",
+    "pherc1667-w029": "C:/Users/nikox/Documents/Vesuvius/data/teacher/p1667w029_iso9.zarr",
+    "pherc1667-w031": "C:/Users/nikox/Documents/Vesuvius/data/corpus/pherc1667-w031_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "1667",
+   "sampling_physical_segment_keys": {
+    "pherc1667-w013": "1667:w013",
+    "pherc1667-w018": "1667:w018",
+    "pherc1667-w023": "1667:w023",
+    "pherc1667-w028": "1667:w028",
+    "pherc1667-w029": "1667:w029",
+    "pherc1667-w031": "1667:w031"
+   },
+   "sampling_representation_keys": {
+    "pherc1667-w013": "public_2p4_level2_zmean4:pherc1667-w013",
+    "pherc1667-w018": "public_2p4_level2_zmean4:pherc1667-w018",
+    "pherc1667-w023": "public_2p4_level2_zmean4:pherc1667-w023",
+    "pherc1667-w028": "public_2p4_level2_zmean4:pherc1667-w028",
+    "pherc1667-w029": "public_2p4_level2_zmean4:pherc1667-w029",
+    "pherc1667-w031": "public_2p4_level2_zmean4:pherc1667-w031"
+   }
+  },
+  {
+   "segments_path": "C:/Users/nikox/Documents/Vesuvius/data/ink9um/labels/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "phercparis4-w00",
+    "phercparis4-w01",
+    "phercparis4-w02",
+    "phercparis4-w03",
+    "phercparis4-w05",
+    "phercparis4-w06",
+    "phercparis4-w07",
+    "phercparis4-w09"
+   ],
+   "surface_volume_paths": {
+    "phercparis4-w00": "C:/Users/nikox/Documents/Vesuvius/data/corpus/phercparis4-w00_iso9.zarr",
+    "phercparis4-w01": "C:/Users/nikox/Documents/Vesuvius/data/corpus/phercparis4-w01_iso9.zarr",
+    "phercparis4-w02": "C:/Users/nikox/Documents/Vesuvius/data/corpus/phercparis4-w02_iso9.zarr",
+    "phercparis4-w03": "C:/Users/nikox/Documents/Vesuvius/data/corpus/phercparis4-w03_iso9.zarr",
+    "phercparis4-w05": "C:/Users/nikox/Documents/Vesuvius/data/corpus/phercparis4-w05_iso9.zarr",
+    "phercparis4-w06": "C:/Users/nikox/Documents/Vesuvius/data/corpus/phercparis4-w06_iso9.zarr",
+    "phercparis4-w07": "C:/Users/nikox/Documents/Vesuvius/data/corpus/phercparis4-w07_iso9.zarr",
+    "phercparis4-w09": "C:/Users/nikox/Documents/Vesuvius/data/corpus/phercparis4-w09_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "Paris4",
+   "sampling_physical_segment_keys": {
+    "phercparis4-w00": "Paris4:w00",
+    "phercparis4-w01": "Paris4:w01",
+    "phercparis4-w02": "Paris4:w02",
+    "phercparis4-w03": "Paris4:w03",
+    "phercparis4-w05": "Paris4:w05",
+    "phercparis4-w06": "Paris4:w06",
+    "phercparis4-w07": "Paris4:w07",
+    "phercparis4-w09": "Paris4:w09"
+   },
+   "sampling_representation_keys": {
+    "phercparis4-w00": "public_2p4_level2_zmean4:phercparis4-w00",
+    "phercparis4-w01": "public_2p4_level2_zmean4:phercparis4-w01",
+    "phercparis4-w02": "public_2p4_level2_zmean4:phercparis4-w02",
+    "phercparis4-w03": "public_2p4_level2_zmean4:phercparis4-w03",
+    "phercparis4-w05": "public_2p4_level2_zmean4:phercparis4-w05",
+    "phercparis4-w06": "public_2p4_level2_zmean4:phercparis4-w06",
+    "phercparis4-w07": "public_2p4_level2_zmean4:phercparis4-w07",
+    "phercparis4-w09": "public_2p4_level2_zmean4:phercparis4-w09"
+   }
+  },
+  {
+   "segments_path": "C:/Users/nikox/Documents/Vesuvius/data/ink9um/labels/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "pherc0814-46527"
+   ],
+   "surface_volume_paths": {
+    "pherc0814-46527": "C:/Users/nikox/Documents/Vesuvius/data/teacher/p0814_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "0814",
+   "sampling_physical_segment_keys": {
+    "pherc0814-46527": "0814:46527"
+   },
+   "sampling_representation_keys": {
+    "pherc0814-46527": "public_2p4_level2_zmean4:pherc0814-46527"
+   }
+  },
+  {
+   "segments_path": "C:/Users/nikox/Documents/Vesuvius/data/ink9um/labels/native9-scrollprizeorg-21slices",
+   "segments": [
+    "w035",
+    "w039",
+    "w040",
+    "w041",
+    "w044"
+   ],
+   "surface_volume_paths": {
+    "w035": "C:/Users/nikox/Documents/Vesuvius/data/corpus/native9/w035.zarr",
+    "w039": "C:/Users/nikox/Documents/Vesuvius/data/corpus/native9/w039.zarr",
+    "w040": "C:/Users/nikox/Documents/Vesuvius/data/ink9um/volumes/9.362um-1.2m-113keV-volume-20250728140407.zarr",
+    "w041": "C:/Users/nikox/Documents/Vesuvius/data/corpus/native9/w041.zarr",
+    "w044": "C:/Users/nikox/Documents/Vesuvius/data/corpus/native9/w044.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "native_9p362_level0",
+   "sampling_scroll": "0139",
+   "sampling_physical_segment_keys": {
+    "w035": "0139:w035",
+    "w039": "0139:w039",
+    "w040": "0139:w040",
+    "w041": "0139:w041",
+    "w044": "0139:w044"
+   },
+   "sampling_representation_keys": {
+    "w035": "native_9p362_level0:w035",
+    "w039": "native_9p362_level0:w039",
+    "w040": "native_9p362_level0:w040",
+    "w041": "native_9p362_level0:w041",
+    "w044": "native_9p362_level0:w044"
+   }
+  }
+ ]
+}
