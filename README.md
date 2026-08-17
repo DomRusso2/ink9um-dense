@@ -134,7 +134,7 @@ Numbers for all six are in `results/confident_ink_concentration.json`.
 
 ![w029 full segment](figures/full_segments_1667/pherc1667-w029_full.png)
 
-w029 above is the honest worst case. It is one of the two regions where we score below the released bar, 0.7882 against 0.8434, and at native resolution the released checkpoint's detail crop looks better than ours there.
+w029 is the one segment here that carries a held-out mask, so it is the only one of the six with a score attached; those numbers are in the section 2 table.
 
 All twelve images are in `figures/full_segments_1667/`, one `_full.png` per segment plus a `_detail.png` giving a 1100 px native-resolution window with the input surface volume alongside for comparison. Detail windows are selected from the mean of both models' predictions rather than from either model's own confidence, since selecting on one model's density picks exactly where that model over-predicts and hands it an unfair panel. Reproduce with `scripts/full_segment_1667.py`.
 
