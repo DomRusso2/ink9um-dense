@@ -39,11 +39,15 @@ Three things fall out of this:
 
 **seed43 is systematically better on two of three regions.** On w016 and w029 the seed43 checkpoints occupy the top of the range almost exclusively. Same-step seed differences reach 0.130 on w016. If you are choosing blind, seed43 later steps are the better default.
 
-**The most obvious default is close to the worst choice.** `seed42/step-075000` is the final checkpoint of the first seed and the natural thing to reach for. It ranks last of 14 on w016 (0.6796 against 0.8194 for the best) and near the bottom on w029.
+**The most obvious default is close to the worst choice.** `seed42/step-075000` is the final checkpoint of the first seed and the natural thing to reach for. On w016 it is second from bottom of the 14, at 0.6796 against 0.8194 for the best, and it sits near the bottom on w029 too.
 
 Reproduce with `scripts/step9_eval.py --released`. It runs the team's inference CLI at their documented settings (`--overlap 0.5 --blend-mode hann --batch-size 8`), scores with their `BalancedAccuracy` against both the supervision and validation masks, and adds a rank-based AUC.
 
-**Label version, important for reproducing these numbers.** Everything here was scored against the `ink_9um` labels as downloaded on 2026-08-14. On 2026-08-18 the team began replacing those masks in place, after this work led them to notice that the released versions had seam regions from the alignment pipeline masked off. Re-running against the corrected labels will therefore not reproduce these tables exactly. The comparisons remain internally valid, since every model here was scored against the same label version with the same masks.
+**Label version, and a re-check against the corrected labels.** These tables were scored against the `ink_9um` aligned labels as of 2026-08-14. On 2026-08-18, after this project was posted, the team re-uploaded all 24 aligned segment directories, because this work led them to notice that the previous upload had "the masks and labels with the seam regions from the alignment pipeline masked off, which is not what we want". The `native9` labels were not affected.
+
+Everything above was then re-scored against the corrected labels. Across 61 scorings the largest change is **0.0033** and the mean is **0.0002**, and no conclusion moves: the best released checkpoint is the same in all three regions, the w016 spread is 0.1392 against 0.1407, and our models rank identically. Raw records for both versions are in `results/`, `step9_results.jsonl` for 2026-08-14 and `step9_results_v20260818.jsonl` for the corrected labels; `scripts/rescore_new_labels.py` reproduces the comparison without re-running inference.
+
+The corrections only ever added pixels, mostly on w016, which gained 81,779 supervision and 2,924 validation pixels; pherc0814 is unchanged and pherc1667-w029 gained 921 supervision pixels. One consequence worth stating plainly: the all-7 dense model trained on those 2,924 pixels, which sat outside the validation region when the dataset was built and are inside it now. That is 1.6% of the w016 validation region, and it does not affect the recommended checkpoint, the control, or any of the team's 14, all of which trained on the manual supervision mask, which gained no validation pixels.
 
 ---
 

@@ -1,0 +1,79 @@
+{
+ "mask_diff": {
+  "pherc0139-w016": {
+   "supervision_mask": {
+    "old_px": 418602,
+    "new_px": 500381,
+    "gained": 81779,
+    "lost": 0
+   },
+   "validation_mask": {
+    "old_px": 175222,
+    "new_px": 178146,
+    "gained": 2924,
+    "lost": 0
+   },
+   "inklabels": {
+    "old_px": 130788,
+    "new_px": 157837,
+    "gained": 27049,
+    "lost": 0
+   }
+  },
+  "pherc0814-46527": {
+   "supervision_mask": {
+    "old_px": 428993,
+    "new_px": 428993,
+    "gained": 0,
+    "lost": 0
+   },
+   "validation_mask": {
+    "old_px": 161051,
+    "new_px": 161051,
+    "gained": 0,
+    "lost": 0
+   },
+   "inklabels": {
+    "old_px": 187170,
+    "new_px": 187170,
+    "gained": 0,
+    "lost": 0
+   }
+  },
+  "pherc1667-w029": {
+   "supervision_mask": {
+    "old_px": 1212915,
+    "new_px": 1213836,
+    "gained": 921,
+    "lost": 0
+   },
+   "validation_mask": {
+    "old_px": 382353,
+    "new_px": 382353,
+    "gained": 0,
+    "lost": 0
+   },
+   "inklabels": {
+    "old_px": 444244,
+    "new_px": 444385,
+    "gained": 141,
+    "lost": 0
+   }
+  }
+ },
+ "contamination": {
+  "pherc0139-w016": {
+   "overlap_px": 2924,
+   "validation_px": 178146
+  },
+  "pherc0814-46527": {
+   "overlap_px": 0,
+   "validation_px": 161051
+  },
+  "pherc1667-w029": {
+   "overlap_px": 0,
+   "validation_px": 382353
+  }
+ },
+ "worst_overlap_px": 2924
+}
