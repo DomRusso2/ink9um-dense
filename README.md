@@ -43,6 +43,8 @@ Three things fall out of this:
 
 Reproduce with `scripts/step9_eval.py --released`. It runs the team's inference CLI at their documented settings (`--overlap 0.5 --blend-mode hann --batch-size 8`), scores with their `BalancedAccuracy` against both the supervision and validation masks, and adds a rank-based AUC.
 
+**Label version, important for reproducing these numbers.** Everything here was scored against the `ink_9um` labels as downloaded on 2026-08-14. On 2026-08-18 the team began replacing those masks in place, after this work led them to notice that the released versions had seam regions from the alignment pipeline masked off. Re-running against the corrected labels will therefore not reproduce these tables exactly. The comparisons remain internally valid, since every model here was scored against the same label version with the same masks.
+
 ---
 
 ## 2. Dense pseudo-labels, and what they do
@@ -228,6 +230,7 @@ python -m koine_machines.training.train configs/train_pseudo_ex016_config.json
 - `best_val_balanced_accuracy` checkpoints are selected on these same three regions, so their numbers carry selection bias. Final-checkpoint comparisons are the clean ones and are what the tables above use.
 - `pherc0139-w028` in the aligned set and `w044` in the native9 set are the same physical segment under two keys, which is a leak in the released split. Both were kept as the team has them, so the corpus matches theirs, but they are not independent evidence.
 - We did not beat the best released checkpoint on w016 or w029. The dot plot shows this rather than hiding it.
+- Scored against the pre-2026-08-18 labels; see the note in section 1. Absolute values will shift against the corrected masks, relative comparisons should not.
 
 ---
 
